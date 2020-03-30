@@ -21,7 +21,7 @@ public class RubTarget : Target
 
         if (Input.GetMouseButtonDown(rubLeft ? 0 : 1)) {
         remaining -= Random.Range(mininumRub, maximumRub);
-        radius.material.SetFloat("_Cutoff", Mathf.Max((remaining / 100f), float.Epsilon));
+        UpdateRadius();
         rubLeft = !rubLeft;
         }
     

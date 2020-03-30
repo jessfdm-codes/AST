@@ -15,4 +15,8 @@ public class Target : MonoBehaviour
     
     void Start(){
     }
+
+    protected void UpdateRadius(){
+        radius.material.SetFloat("_Cutoff", Mathf.Max((remaining / 100f), float.Epsilon));
+    }
 }

@@ -10,7 +10,7 @@ public class StrokeTarget : Target
     {
         if (mouseOver){
             remaining -= Time.deltaTime * 50f;
-            radius.material.SetFloat("_Cutoff", Mathf.Max((remaining / 100f), float.Epsilon));
+            UpdateRadius();
         }
 
         if (remaining <= 0.0f){
