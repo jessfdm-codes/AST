@@ -284,7 +284,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7db2153e8a30ac94b9e7da06d2f9f4b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetPrefab: {fileID: 2194941207558178789, guid: a6f7702c866249649b1e3b9702755bfa,
+  targetPrefab: {fileID: 8272784322684419054, guid: 404be78978d134246ba3d7b95b692b52,
     type: 3}
 --- !u!224 &643770287
 RectTransform:

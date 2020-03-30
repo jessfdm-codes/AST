@@ -6,7 +6,7 @@ public class TargetBoard : MonoBehaviour
 {
     [SerializeField]
     private GameObject targetPrefab;
-    private StrokeTarget currTarget;
+    private Target currTarget;
     private int score = 0;
 
     // Start is called before the first frame update
@@ -38,7 +38,7 @@ public class TargetBoard : MonoBehaviour
 
         var newGo = Instantiate(targetPrefab);
         (newGo.transform as RectTransform).position = new Vector2(x, y);
-        currTarget = newGo.GetComponent<StrokeTarget>();
+        currTarget = newGo.GetComponent<Target>();
         currTarget.TargetBoard = this;
     }
 }
