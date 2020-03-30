@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(CircleCollider2D))]
 public class RubTarget : Target
 {
     [SerializeField]
@@ -10,10 +11,15 @@ public class RubTarget : Target
     private float maximumRub = 4f;
 
     private bool rubLeft = true;
-
+    
+    private bool mouseOver = false;
     void Update()
     {
-        if (Input.GetKeyDown(rubLeft ? KeyCode.LeftArrow : KeyCode.RightArrow)) {
+        if(!mouseOver){
+            return;
+        }
+
+        if (Input.GetMouseButtonDown(rubLeft ? 0 : 1)) {
         remaining -= Random.Range(mininumRub, maximumRub);
         radius.material.SetFloat("_Cutoff", Mathf.Max((remaining / 100f), float.Epsilon));
         rubLeft = !rubLeft;
@@ -23,5 +29,13 @@ public class RubTarget : Target
             radius.material.SetFloat("_Cutoff", 100f);
             TargetBoard.NotifyPointScored();
         }
+    }
+
+    void OnMouseEnter(){
+        mouseOver = true;
+    }
+
+    void OnMouseExit(){
+        mouseOver = false;
     }
 }
