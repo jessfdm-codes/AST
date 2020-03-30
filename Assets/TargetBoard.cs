@@ -5,7 +5,7 @@ using UnityEngine;
 public class TargetBoard : MonoBehaviour
 {
     [SerializeField]
-    private GameObject targetPrefab;
+    private GameObject[] targetPrefabs;
     private Target currTarget;
     private int score = 0;
 
@@ -36,7 +36,7 @@ public class TargetBoard : MonoBehaviour
         float x = Mathf.Lerp(corners[0].x, corners[3].x, Random.Range(0f,1f));
         float y = Mathf.Lerp(corners[0].y, corners[1].y, Random.Range(0f,1f));
 
-        var newGo = Instantiate(targetPrefab);
+        var newGo = Instantiate(targetPrefabs[(int) Random.Range(0, targetPrefabs.Length)]);
         (newGo.transform as RectTransform).position = new Vector2(x, y);
         currTarget = newGo.GetComponent<Target>();
         currTarget.TargetBoard = this;

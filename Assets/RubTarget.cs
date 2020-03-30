@@ -17,7 +17,6 @@ public class RubTarget : Target
         remaining -= Random.Range(mininumRub, maximumRub);
         radius.material.SetFloat("_Cutoff", Mathf.Max((remaining / 100f), float.Epsilon));
         rubLeft = !rubLeft;
-        Debug.Log(remaining);
         }
     
         if (remaining <= maximumRub){
