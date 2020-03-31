@@ -11,8 +11,8 @@ public class RubTarget : Target
     private float maximumRub = 4f;
 
     private bool rubLeft = true;
-    
     private bool mouseOver = false;
+
     void Update()
     {
         if(!mouseOver){

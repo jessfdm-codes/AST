@@ -12,6 +12,7 @@ public class TickleTarget : Target
     private string[] keys = { "a", "s", "d", "f" };
     private Stack<string> nextKey = new Stack<string>();
     private int repetitions;
+    private bool mouseOver = false;
 
     void Start()
     {
@@ -25,6 +26,10 @@ public class TickleTarget : Target
 
     private void Update()
     {
+        if(!mouseOver) {
+            return;
+        }
+
         switch (nextKey.Peek().ToUpper()) {
             case "A":
                 if (Input.GetKeyDown(KeyCode.A)) IncreaseDoggyHappiness();
@@ -52,5 +57,13 @@ public class TickleTarget : Target
         if (remaining <= 0.0f){
             TargetBoard.NotifyPointScored();
         }
+    }
+
+    void OnMouseEnter(){
+        mouseOver = true;
+    }
+
+    void OnMouseExit(){
+        mouseOver = false;
     }
 }
