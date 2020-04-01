@@ -13,11 +13,14 @@ public class TargetBoard : MonoBehaviour
     private Text scoreText;
     [SerializeField]
     private Text timerText;
-    private Target currTarget;
-    private int score = 0;
-    private float timeLeft;
+
+    public float targetScore;
     public int gameLengthSeconds;
     public bool gameOver { get; private set; }
+
+    private Target currTarget;
+    private float score = 0;
+    private float timeLeft;
 
     void Start()
     {
@@ -31,21 +34,29 @@ public class TargetBoard : MonoBehaviour
             return;
         }
 
+        if (score >= targetScore) {
+            gameOver = true;
+            nextBehaviourText.text = "You befriended the dog!";
+            return;
+        }
+
         timeLeft -= Time.deltaTime;
-        timerText.text = MakeTimerString();
+        timerText.text = MakeSimpleTimerString();
 
         if (timeLeft <= 0f) {
             gameOver = true;
-            nextBehaviourText.text = "Time's Up!";
+            nextBehaviourText.text = "The dog got bored...";
         }
     }
 
     public void NotifyPointScored(){
-        score++;
-        scoreText.text = score.ToString();
+        score = Mathf.Min(targetScore, score + Random.Range(1f, 2.5f));
+        scoreText.text = $"{score.ToString()}/{targetScore.ToString()}"; // plan to use a progress bar in future
+
         Destroy(currTarget.gameObject);
         currTarget = null;
-        SpawnTarget();
+
+        if (score < targetScore) SpawnTarget();
     }
 
     private void SpawnTarget(){
