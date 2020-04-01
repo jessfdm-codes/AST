@@ -9,23 +9,40 @@ public class TargetBoard : MonoBehaviour
     private GameObject[] targetPrefabs;
     [SerializeField]
     private Text nextBehaviourText;
+    [SerializeField]
+    private Text scoreText;
+    [SerializeField]
+    private Text timerText;
     private Target currTarget;
     private int score = 0;
+    private float timeLeft;
+    public int gameLengthSeconds;
+    public bool gameOver { get; private set; }
 
-    // Start is called before the first frame update
     void Start()
     {
+        timeLeft = (float) gameLengthSeconds;
         SpawnTarget();
     }
 
-    // Update is called once per frame
     void Update()
     {
+        if (gameOver) {
+            return;
+        }
 
+        timeLeft -= Time.deltaTime;
+        timerText.text = MakeTimerString();
+
+        if (timeLeft <= 0f) {
+            gameOver = true;
+            nextBehaviourText.text = "Time's Up!";
+        }
     }
 
     public void NotifyPointScored(){
         score++;
+        scoreText.text = score.ToString();
         Destroy(currTarget.gameObject);
         currTarget = null;
         SpawnTarget();
@@ -60,5 +77,24 @@ public class TargetBoard : MonoBehaviour
             default:
                 break;
         }
+    }
+
+    // if we're happy showing time just as seconds (e.g. 120), use this
+    private string MakeSimpleTimerString() =>
+        Mathf.CeilToInt(timeLeft).ToString();
+
+    // if we want minutes (e.g. 2:00), use this
+    private string MakeTimerString() {
+        int secondsLeft = Mathf.CeilToInt(timeLeft % 60);
+
+        string seconds = secondsLeft < 10
+            ? $"0{secondsLeft.ToString()}"
+            : (secondsLeft == 60
+                ? "00"
+                : secondsLeft.ToString());
+
+        int minutesLeft = Mathf.FloorToInt((timeLeft + 1) / 60f);
+
+        return $"{minutesLeft.ToString()}:{seconds}";
     }
 }

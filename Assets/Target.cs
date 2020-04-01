@@ -17,6 +17,9 @@ public class Target : MonoBehaviour
     }
 
     protected void UpdateRadius(){
+        if (TargetBoard.gameOver) {
+            return;
+        }
         radius.material.SetFloat("_Cutoff", Mathf.Max((remaining / 100f), float.Epsilon));
     }
 }
