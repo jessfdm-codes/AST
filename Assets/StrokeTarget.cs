@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class StrokeTarget : Target
 {
-    private bool mouseOver;
 
     void Update()
     {
@@ -16,14 +15,5 @@ public class StrokeTarget : Target
         if (remaining <= 0.0f){
             TargetBoard.NotifyPointScored();
         }
-    }
-
-
-    void OnMouseEnter(){
-        mouseOver = true;
-    }
-
-    void OnMouseExit(){
-        mouseOver = false;
     }
 }

@@ -21,6 +21,9 @@ public class SimpleCharacterControlFree : MonoBehaviour
         Direct
     }
 
+    [SerializeField] private Camera m_playerCam;
+    [SerializeField] private GameObject m_cameraLock = null;
+    [SerializeField] private bool m_controlEnabled = true;
     [SerializeField] private float m_moveSpeed = 2;
     [SerializeField] private float m_turnSpeed = 200;
     [SerializeField] private float m_jumpForce = 4;
@@ -52,6 +55,34 @@ public class SimpleCharacterControlFree : MonoBehaviour
     {
         if(!m_animator) { gameObject.GetComponent<Animator>(); }
         if(!m_rigidBody) { gameObject.GetComponent<Animator>(); }
+    }
+
+    private void Start()
+    {
+        m_playerCam = GetComponentInChildren<Camera>();
+    }
+
+    public Camera ClaimCameraControl(GameObject other)
+    {
+        if(m_cameraLock == null)
+        {
+            m_cameraLock = other;
+            m_controlEnabled = false;
+            return m_playerCam;
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    public void ReleaseCameraControl(GameObject other)
+    {
+        if(other == m_cameraLock)
+        {
+            m_cameraLock = null;
+            m_controlEnabled = true;
+        }
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -111,19 +142,22 @@ public class SimpleCharacterControlFree : MonoBehaviour
     {
         m_animator.SetBool("Grounded", m_isGrounded);
 
-        switch(m_controlMode)
+        if (m_controlEnabled)
         {
-            case ControlMode.Direct:
-                DirectUpdate();
-                break;
+            switch (m_controlMode)
+            {
+                case ControlMode.Direct:
+                    DirectUpdate();
+                    break;
 
-            case ControlMode.Tank:
-                TankUpdate();
-                break;
+                case ControlMode.Tank:
+                    TankUpdate();
+                    break;
 
-            default:
-                Debug.LogError("Unsupported state");
-                break;
+                default:
+                    Debug.LogError("Unsupported state");
+                    break;
+            }
         }
 
         m_wasGrounded = m_isGrounded;

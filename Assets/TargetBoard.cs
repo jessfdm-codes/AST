@@ -1,52 +1,105 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
+[Serializable]
 public class TargetBoard : MonoBehaviour
 {
+    //Set in editor
     [SerializeField]
     private GameObject[] targetPrefabs;
+    public GameObject alertPrefab;
     [SerializeField]
     private Text nextBehaviourText;
     [SerializeField]
     private Text scoreText;
     [SerializeField]
     private Text timerText;
-
     public float targetScore;
-    public int gameLengthSeconds;
-    public bool gameOver { get; private set; }
 
+    private DogController source;
+    public int gameLengthSeconds;
+    public bool gameOver;
+    private bool isVisible = false;
     private Target currTarget;
-    private float score = 0;
-    private float timeLeft;
+    private float score;
+    private float timeLeft;    
+
+    private void Awake()
+    {
+        gameOver = true;
+    }
 
     void Start()
-    {
-        timeLeft = (float) gameLengthSeconds;
-        SpawnTarget();
+    {        
     }
 
     void Update()
     {
-        if (gameOver) {
-            return;
-        }
+        UpdateVisibility();
 
-        if (score >= targetScore) {
-            gameOver = true;
-            nextBehaviourText.text = "You befriended the dog!";
-            return;
-        }
+        if (!gameOver)
+        {
+            timeLeft -= Time.deltaTime;
+            timerText.text = MakeSimpleTimerString();
 
-        timeLeft -= Time.deltaTime;
-        timerText.text = MakeSimpleTimerString();
+            if (currTarget is null)
+            {
+                if (score < targetScore) SpawnTarget();
+            }
 
-        if (timeLeft <= 0f) {
-            gameOver = true;
-            nextBehaviourText.text = "The dog got bored...";
+            if (score >= targetScore)
+            {
+                EndGame(true);
+            }
+            else if (timeLeft <= 0f)
+            {
+                EndGame(false);                
+            }                
+        }        
+    }
+
+    public void StartGame(DogController source)
+    {
+        this.source = source;
+        score = 0;
+        timeLeft = (float)gameLengthSeconds;
+        gameOver = false;
+        isVisible = true;
+    }
+
+    void EndGame(bool success)
+    {
+        source.GameOver(success);
+        gameOver = true;
+        isVisible = false;
+        if (currTarget != null)
+        {
+            Destroy(currTarget.gameObject);
+            currTarget = null;
         }
+        var msg = Instantiate(alertPrefab, this.transform);
+        var txt = msg.GetComponent<Text>();        
+        if (success)
+        {
+            txt.text = "You befriended the dog!";
+            txt.color = Color.green;
+        }
+        else
+        {
+            txt.text = "The dog got bored...";
+            txt.color = Color.red;
+        }
+    }
+
+    private void UpdateVisibility()
+    {
+        nextBehaviourText.enabled = isVisible;
+        scoreText.enabled = isVisible;
+        timerText.enabled = isVisible;
     }
 
     public void NotifyPointScored(){
@@ -54,9 +107,7 @@ public class TargetBoard : MonoBehaviour
         scoreText.text = $"{score.ToString()}/{targetScore.ToString()}"; // plan to use a progress bar in future
 
         Destroy(currTarget.gameObject);
-        currTarget = null;
-
-        if (score < targetScore) SpawnTarget();
+        currTarget = null;       
     }
 
     private void SpawnTarget(){
@@ -67,7 +118,7 @@ public class TargetBoard : MonoBehaviour
         float x = Mathf.Lerp(corners[0].x, corners[3].x, Random.Range(0f,1f));
         float y = Mathf.Lerp(corners[0].y, corners[1].y, Random.Range(0f,1f));
 
-        var newGo = Instantiate(targetPrefabs[Random.Range(0, targetPrefabs.Length)]);
+        var newGo = Instantiate(targetPrefabs[Random.Range(0, targetPrefabs.Length)],transform);
         (newGo.transform as RectTransform).position = new Vector2(x, y);
         currTarget = newGo.GetComponent<Target>();
         currTarget.TargetBoard = this;

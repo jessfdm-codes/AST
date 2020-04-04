@@ -1,52 +1,48 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(CircleCollider2D))]
 public class SpinTarget : Target
 {
-    private bool entered = false;
     private float prevAngle;
-
+    public float theta_to_prog_conv;
     private bool clockwise = false;
 
     // Update is called once per frame
     void Update()
     {
-        var point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        if (mouseOver)
+        {
+            var point = Input.mousePosition;
+            var diff = point - this.transform.position;
 
-        var diff = point - this.transform.position;
+            var angle = Mathf.Atan2(diff.y, diff.x);
 
-        if (diff.magnitude > 300){
-            return;
-        }
-
-        var angle = Mathf.Atan2(diff.y, diff.x);
-
-        //Check mouse movement
-        if (clockwise){
-            if (angle < prevAngle){
-                prevAngle = angle;
-            } else if (prevAngle < -3f && angle > 0f){
-                prevAngle = angle;
-                remaining -= 20;
+            //Check mouse movement
+            if (clockwise)
+            {
+                //TODO
             }
-        } else {
-            if (angle > prevAngle){
-                prevAngle = angle;
-            } else if (prevAngle > 3f && angle < 0f){
-                prevAngle = angle;
-                remaining -= 20;
+            else
+            {
+                if (angle <= prevAngle)
+                {
+
+                }
+                else if (angle > prevAngle || prevAngle > 3f && angle < 0f)
+                {
+                    remaining -= Mathf.Abs(angle - prevAngle) * theta_to_prog_conv;
+                }
+            }
+            prevAngle = angle;
+            UpdateRadius();
+
+            if (remaining <= 0)
+            {
+                TargetBoard.NotifyPointScored();
             }
         }
-        UpdateRadius();
-
-        if (remaining <= 0){
-            TargetBoard.NotifyPointScored();
-        }
-    }
-
-    void OnMouseEnter(){
-        entered = true;
     }
 }

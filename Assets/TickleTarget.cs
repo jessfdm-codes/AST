@@ -12,10 +12,10 @@ public class TickleTarget : Target
     private string[] keys = { "a", "s", "d", "f" };
     private Stack<string> nextKey = new Stack<string>();
     private int repetitions;
-    private bool mouseOver = false;
 
     void Start()
     {
+        base.Start();
         keys = keys.Reverse().ToArray();
         repetitions = Random.Range(minRepetitions, maxRepetitions);
 
@@ -57,13 +57,5 @@ public class TickleTarget : Target
         if (remaining <= 0.0f){
             TargetBoard.NotifyPointScored();
         }
-    }
-
-    void OnMouseEnter(){
-        mouseOver = true;
-    }
-
-    void OnMouseExit(){
-        mouseOver = false;
     }
 }

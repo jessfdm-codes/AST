@@ -1,25 +1,46 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
-public class Target : MonoBehaviour
+[Serializable]
+public class Target : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField]
-    protected SpriteRenderer radius;
+    protected Image radius;
 
     public TargetBoard TargetBoard {get; set;}
-    protected float remaining = 100.0f;
+    public float remaining = 100.0f;
+    public bool mouseOver = false;
 
     void Awake(){
     }
     
-    void Start(){
+    protected void Start(){
+        UpdateRadius();
     }
 
     protected void UpdateRadius(){
         if (TargetBoard.gameOver) {
             return;
         }
-        radius.material.SetFloat("_Cutoff", Mathf.Max((remaining / 100f), float.Epsilon));
+        var r = remaining / 100f;
+        Debug.Log(r);
+        var v = Mathf.Max(r, float.Epsilon);
+        radius.material.SetFloat("_Cutoff", v);
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        Debug.Log("Mouse enter");
+        mouseOver = true;
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        Debug.Log("Mouse exit");
+        mouseOver = false;
     }
 }

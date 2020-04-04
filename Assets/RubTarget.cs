@@ -11,7 +11,6 @@ public class RubTarget : Target
     private float maximumRub = 4f;
 
     private bool rubLeft = true;
-    private bool mouseOver = false;
 
     void Update()
     {
@@ -29,13 +28,5 @@ public class RubTarget : Target
             radius.material.SetFloat("_Cutoff", 100f);
             TargetBoard.NotifyPointScored();
         }
-    }
-
-    void OnMouseEnter(){
-        mouseOver = true;
-    }
-
-    void OnMouseExit(){
-        mouseOver = false;
     }
 }
