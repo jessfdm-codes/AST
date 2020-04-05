@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
@@ -13,11 +14,11 @@ public class TargetBoard : MonoBehaviour
     private GameObject[] targetPrefabs;
     public GameObject alertPrefab;
     [SerializeField]
-    private Text nextBehaviourText;
+    private TMP_Text nextBehaviourText;
     [SerializeField]
-    private Text scoreText;
+    private TMP_Text scoreText;
     [SerializeField]
-    private Text timerText;
+    private TMP_Text timerText;
     public float targetScore;
 
     private DogController source;
