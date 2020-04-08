@@ -10,7 +10,8 @@ using Random = UnityEngine.Random;
 public class DogController : MonoBehaviour
 {
 
-    public Transform[] camMounts;
+    public Transform[] dogCamMounts;
+    public Transform playerCamMount;
     public Canvas board;
     private bool mouseOver = false;
 
@@ -18,32 +19,32 @@ public class DogController : MonoBehaviour
     private bool gameRunning = false;
     public float camMoveTime;
 
-    // Start is called before the first frame update
     void Start()
     {
-        camMounts = GetComponentsInChildren<Transform>().Where(x => x.name.Contains("Mount")).ToArray();
+        dogCamMounts = GetComponentsInChildren<Transform>().Where(x => x.name.Contains("Mount")).ToArray();
+        playerCamMount = FindObjectOfType<SimpleCharacterControlFree>().transform.Find("CamMount");
         board = FindObjectOfType<Canvas>();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonDown(0) && mouseOver) {
-            Debug.Log("noted...");
+        if (Input.GetMouseButtonDown(0) && mouseOver && !gameRunning) {
             //lock game
             gameRunning = true;
             //get camera
             playerCam = FindObjectOfType<SimpleCharacterControlFree>().ClaimCameraControl(this.gameObject);
             //move camera to correct point
-            StartCoroutine(MoveCamera());
-            //activate canvas
-            board.GetComponent<TargetBoard>().StartGame(this);            
+            StartCoroutine(MoveCamera(dogCamMounts[Random.Range(0, dogCamMounts.Length - 1)]));   
         }
     }
 
-    IEnumerator MoveCamera()
+    public void GameOver(bool success)
     {
-        Transform target = camMounts[Random.Range(0, camMounts.Length - 1)];
+        StartCoroutine(MoveCamera(playerCamMount));
+    }
+
+    IEnumerator MoveCamera(Transform target)
+    {
         Vector3 startPos = playerCam.transform.position;
         Quaternion startRot = playerCam.transform.rotation;
         float moveTime = 0f;
@@ -61,13 +62,15 @@ public class DogController : MonoBehaviour
 
             yield return null;
         }
-    }
 
-    public void GameOver(bool success)
-    {
-        gameRunning = false;
-        //set player ownership and shit
-        FindObjectOfType<SimpleCharacterControlFree>().ReleaseCameraControl(this.gameObject);
+        if (dogCamMounts.Contains(target)) {
+            //activate canvas
+            board.GetComponent<TargetBoard>().StartGame(this);         
+        } else {
+            gameRunning = false;
+            //set player ownership and shit
+            FindObjectOfType<SimpleCharacterControlFree>().ReleaseCameraControl(this.gameObject);
+        }
     }
 
     private void OnMouseEnter()  => mouseOver = true;
